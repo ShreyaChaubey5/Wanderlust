@@ -15,9 +15,7 @@ const flash = require('connect-flash');
 const User= require("./models/user.js");
 const LocalStrategy= require("passport-local");
 const passport=require("passport");
-const {isLoggedIn}=require("./middleware.js");
 const cors = require("cors");
-
 //const Mongo_URL = "mongodb://127.0.0.1:27017/wanderlust";
 const dbUrl=process.env.ATLASDB_URL;
 
@@ -36,8 +34,11 @@ main()
   });
 
 async function main() {
-  await mongoose.connect(dbUrl);
+   mongoose.connect(dbUrl);
 }
+// async function main() {
+//    mongoose.connect(Mongo_URL );
+// }
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -82,6 +83,8 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
+
 //search
 app.use(cors());
 
@@ -108,6 +111,7 @@ app.get("/api/search", (req, res) => {
 
 
 
+
 //pbkdf2 hashing algo
 
 app.use((req,res,next) => {
@@ -117,11 +121,20 @@ app.use((req,res,next) => {
   next();
 })
 
+
+//home route
+app.get("/", (req, res) => {
+  res.render("home"); // This should match views/home.ejs
+});
+
+
 app.use("/listings",listingRouter);
 app.use("/listings/:id/reviews/",reviewRouter);
 app.use("/",userRouter)
 
-// FIXED: 404 handler - Use middleware instead of app.all("*")
+
+
+//FIXED: 404 handler - Use middleware instead of app.all("*")
 app.use((req, res, next) => {
   const err = new ExpressError(404, "Page not found!");
   next(err);
