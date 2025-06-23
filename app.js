@@ -106,7 +106,10 @@ app.get("/api/search", (req, res) => {
 
 
 
-
+//home route
+app.get("/", (req, res) => {
+  res.render("home"); // This should match views/home.ejs
+});
 
 //pbkdf2 hashing algo
 
